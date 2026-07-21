@@ -1,0 +1,44 @@
+# A few days in the colony: exercises every operation plus expected errors.
+colony_status
+feed_queen amount=1
+# 2 larvae now need care, the two nurses cannot spare anyone:
+get_ants
+requalify_ant id=10 profession=worker
+# one nurse per larva, and both nurses have their hands full:
+feed_queen amount=1
+requalify_ant id=4 profession=nurse
+feed_queen amount=1
+requalify_ant id=3 profession=nurse
+# now the nurses could cover a fourth larva, but all 3 chambers are taken:
+feed_queen amount=1
+# every idle worker digs one chamber for one food, ready tomorrow
+dig_chamber
+# dug today, open tomorrow, so laying still fails:
+feed_queen amount=1
+dispatch_foraging_party source=oak count=3
+new_day
+feed_queen amount=1
+hatch_ant caste=soldier
+requalify_ant id=1 profession=soldier
+get_ants
+new_day
+# two days out with 3 foragers pays 3+2=5 food:
+return_expedition id=1
+scout_new_trail source=acacia
+dispatch_foraging_party source=acacia count=1
+# a party cannot leave and come back on the same day:
+return_expedition id=2
+# 4 soldiers hold the line against threat 4:
+raise_alarm threat=4
+# but not against threat 9: stores and brood are lost
+raise_alarm threat=9
+# expected errors: empty stores block the queen and the diggers,
+# and expedition 1 already came back
+feed_queen amount=1
+return_expedition id=1
+dig_chamber
+new_day
+# the acacia party missed the raid entirely and still gets paid:
+return_expedition id=2
+colony_status
+dispatch_foraging_party source=yucca count=1
