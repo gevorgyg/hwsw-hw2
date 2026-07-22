@@ -1,15 +1,24 @@
-from state_store import load, load_event, reply, save
+"""_record_census: subscriber that snapshots the day's head count.
 
+Runs after any event that can change the population, and stores the ant
+and larva counts under the current day. Later calls on the same day
+overwrite the entry, so the census keeps one row per day.
+"""
 
-def handler(event):
-    day = load("day")["day"]
-    ants = load("ants")["items"]
-    larvae = load("larvae")["items"]
-    census = load("census")
-    census[str(day)] = {"ants": len(ants), "larvae": len(larvae)}
-    save("census", census)
-    return {"recorded_day": day}
+import json
+from pathlib import Path
 
+STATE_DIR = Path(__file__).resolve().parent.parent / "state"
 
-if __name__ == "__main__":
-    reply(handler(load_event()))
+day = json.loads((STATE_DIR / "day.json").read_text())["day"]
+ants = json.loads((STATE_DIR / "ants.json").read_text())["items"]
+larvae = json.loads((STATE_DIR / "larvae.json").read_text())["items"]
+census = json.loads((STATE_DIR / "census.json").read_text())
+
+census[str(day)] = {"ants": len(ants), "larvae": len(larvae)}
+
+tmp = STATE_DIR / "census.json.tmp"
+tmp.write_text(json.dumps(census))
+tmp.replace(STATE_DIR / "census.json")
+
+print(json.dumps({"recorded_day": day}))

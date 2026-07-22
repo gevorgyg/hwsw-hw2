@@ -1,15 +1,13 @@
 """get_ants: read-only roster of every ant's id, job, and status."""
 
-from state_store import load_event, load_state, reply
+import json
+from pathlib import Path
 
+STATE_DIR = Path(__file__).resolve().parent.parent / "state"
 
-def handler(event):
-    state = load_state()
-    return {"ants": [{"id": int(ant_id), "job": a["caste"],
-                      "status": a["status"]}
-                     for ant_id, a in sorted(state["ants"].items(),
-                                             key=lambda kv: int(kv[0]))]}
+ants = json.loads((STATE_DIR / "ants.json").read_text())
 
-
-if __name__ == "__main__":
-    reply(handler(load_event()))
+print(json.dumps({"ants": [{"id": int(ant_id), "job": a["caste"],
+                            "status": a["status"]}
+                           for ant_id, a in sorted(ants["items"].items(),
+                                                   key=lambda kv: int(kv[0]))]}))

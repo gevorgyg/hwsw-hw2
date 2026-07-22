@@ -28,17 +28,44 @@ scout_new_trail source=acacia
 dispatch_foraging_party source=acacia count=1
 # a party cannot leave and come back on the same day:
 return_expedition id=2
-# 4 soldiers hold the line against threat 4:
 raise_alarm threat=4
-# but not against threat 9: stores and brood are lost
 raise_alarm threat=9
-# expected errors: empty stores block the queen and the diggers,
-# and expedition 1 already came back
 feed_queen amount=1
 return_expedition id=1
 dig_chamber
-new_day
-# the acacia party missed the raid entirely and still gets paid:
-return_expedition id=2
 colony_status
 dispatch_foraging_party source=yucca count=1
+
+# --- recovery after the raid ---
+# a day has passed, so the acacia scout can finally come home
+new_day
+return_expedition id=2
+# spend the little food on a full oak party
+dispatch_foraging_party source=oak count=3
+# every forager is out, so there is no one left to scout:
+scout_new_trail source=willow
+# let the party range for two nights
+new_day
+new_day
+# three foragers, two nights out: pays 3+2=5 food
+return_expedition id=3
+# refill the brood: four nurses and five open chambers can take four larvae
+feed_queen amount=4
+# the fifth larva has no nurse to spare:
+feed_queen amount=1
+hatch_ant caste=worker
+# hatch a nurse so the colony can raise one more larva
+hatch_ant caste=nurse
+feed_queen amount=1
+get_ants
+# two idle workers dig two chambers, emptying the stores again
+dig_chamber
+new_day
+# promote a forager so the soldiers can hold a heavier raid
+requalify_ant id=7 profession=soldier
+# five soldiers now stand off a threat of five
+raise_alarm threat=5
+colony_status
+# send a fresh party down the acacia trail to close the run
+dispatch_foraging_party source=acacia count=2
+colony_status
