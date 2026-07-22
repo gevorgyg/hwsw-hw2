@@ -10,7 +10,6 @@ performance comparison fair.
 """
 
 import argparse
-import sys
 
 from shared.interpreter import Interpreter
 
@@ -27,7 +26,7 @@ def main():
     if args.approach == "traditional":
         from Traditional.app import build_commands
     else:
-        sys.exit("the FaaS implementation is not built yet")
+        from FaaS.gateway import build_commands
 
     interpreter = Interpreter(build_commands())
     if args.workload is None:
