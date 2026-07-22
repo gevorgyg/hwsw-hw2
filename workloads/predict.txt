@@ -1,0 +1,10 @@
+# Part 3: predicting population from the colony's own census history.
+# with no census yet, the forecast is flat:
+predict_population days=2
+feed_queen amount=1
+new_day
+hatch_ant caste=nurse
+feed_queen amount=2
+new_day
+predict_population days=3
+colony_status
